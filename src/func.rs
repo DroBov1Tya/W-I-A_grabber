@@ -43,3 +43,4 @@ pub fn list_installed_apps(uninstall_key: &RegKey) -> io::Result<HashMap<String,
     }
     Ok(installed_apps)
 }
+
