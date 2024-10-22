@@ -2,15 +2,21 @@ use reqwest::blocking::Client; // Используем blocking версию к�
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::Serialize;
 use std::error::Error;
+use std::collections::HashMap;
 
 #[derive(Serialize)]
 struct RequestBody {
     computer_name: String,
-    big_bit: Vec<String>,
-    low_bit: Vec<String>,
+    big_bit: HashMap<String, HashMap<String, Option<String>>>,
+    low_bit: HashMap<String, HashMap<String, Option<String>>>,
 }
 
-pub fn req(big_bit: Vec<String>, low_bit: Vec<String>, token: String, computer_name: String) -> Result<(), Box<dyn Error>> {
+pub fn req(
+    big_bit: HashMap<String, HashMap<String, Option<String>>>, 
+    low_bit: HashMap<String, HashMap<String, Option<String>>>, 
+    token: String, 
+    computer_name: String
+) -> Result<(), Box<dyn Error>> {
     let client = Client::new();
 
     let body = RequestBody {
@@ -29,9 +35,6 @@ pub fn req(big_bit: Vec<String>, low_bit: Vec<String>, token: String, computer_n
         .headers(headers)
         .body(body_json)
         .send()?;
-
-    // Вывод статуса ответа
-    println!("{}", response.status());
 
     Ok(())
 }
