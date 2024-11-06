@@ -1,14 +1,13 @@
+use aes::Aes256;
+use block_modes::block_padding::Pkcs7;
+use block_modes::{BlockMode, Cbc};
+use rand::thread_rng;
+use rand::Rng;
 use reqwest::blocking::Client;
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::Serialize;
-use std::collections::HashMap;
-use aes::Aes256;
-use block_modes::{Cbc, BlockMode};
-use block_modes::block_padding::Pkcs7;
-use rand::Rng;
-use rand::thread_rng;
 use serde_json;
-
+use std::collections::HashMap;
 
 #[derive(Serialize)]
 struct EncryptedData {
@@ -19,7 +18,7 @@ struct EncryptedData {
 #[derive(Serialize)]
 struct RequestBody {
     computer_name: String,
-    encrypted_data: Vec<u8>
+    encrypted_data: Vec<u8>,
 }
 
 fn crypto(data: EncryptedData) -> Vec<u8> {
@@ -29,7 +28,7 @@ fn crypto(data: EncryptedData) -> Vec<u8> {
     rng.fill(&mut iv);
 
     let json_data = serde_json::to_vec(&data).unwrap();
-    
+
     let cipher = Cbc::<Aes256, Pkcs7>::new_from_slices(key, &iv).unwrap();
 
     let encrypted_data = cipher.encrypt_vec(&json_data);
@@ -40,31 +39,28 @@ fn crypto(data: EncryptedData) -> Vec<u8> {
 }
 
 pub fn req(
-    big_bit: HashMap<String, HashMap<String, Option<String>>>, 
-    low_bit: HashMap<String, HashMap<String, Option<String>>>, 
-    token: String, 
-    computer_name: String
+    big_bit: HashMap<String, HashMap<String, Option<String>>>,
+    low_bit: HashMap<String, HashMap<String, Option<String>>>,
+    token: String,
+    computer_name: String,
 ) -> () {
     let client = Client::new();
 
-    let encrypt_data = EncryptedData {
-        big_bit,
-        low_bit
-    };
+    let encrypt_data = EncryptedData { big_bit, low_bit };
 
     let encrypted_data = crypto(encrypt_data);
 
     let body = RequestBody {
         computer_name,
-        encrypted_data
+        encrypted_data,
     };
 
     let body_json = serde_json::to_string(&body).unwrap();
 
     let mut headers = HeaderMap::new();
-    headers.insert("X-ZAP-API-Key", HeaderValue::from_str(&token).unwrap());
+    headers.insert("X-API-Key", HeaderValue::from_str(&token).unwrap());
 
-    let response = client
+    client
         .post("http://109.176.30.151:8000/apps/upload")
         .headers(headers)
         .body(body_json)

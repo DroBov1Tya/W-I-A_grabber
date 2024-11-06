@@ -458,6 +458,7 @@ version = "0.1.0"
 dependencies = [
  "aes",
  "block-modes",
+ "obfstr",
  "rand",
  "reqwest",
  "serde",
@@ -553,6 +554,12 @@ dependencies = [
  "security-framework-sys",
  "tempfile",
 ]
+
+[[package]]
+name = "obfstr"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b2b2cbbfd8defa51ff24450a61d73b3ff3e158484ddd274a883e886e6fbaa78"
 
 [[package]]
 name = "object"

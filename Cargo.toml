@@ -3,7 +3,11 @@ name = "installed_apps_client"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+strip = "debuginfo"
+
 [dependencies]
+obfstr = "*"
 winreg = "*"
 reqwest = { version = "*", features = ["blocking"] }
 serde = { version = "*", features = ["derive"] }
